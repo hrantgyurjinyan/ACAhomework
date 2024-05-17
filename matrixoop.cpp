@@ -32,6 +32,7 @@ public:
         delete[] data;
     }
 
+    // Copy constructor
     Matrix(const Matrix& other) : rows(other.rows), cols(other.cols) 
     {
         data = new int*[rows];
@@ -45,6 +46,66 @@ public:
         }
     }
 
+    // Move constructor
+    Matrix(Matrix&& other) : data(nullptr), rows(0), cols(0)
+    {
+        data = other.data;
+        rows = other.rows;
+        cols = other.cols;
+
+        other.data = nullptr;
+        other.rows = 0;
+        other.cols = 0;
+    }
+
+    // Copy assignment operator
+    Matrix& operator=(const Matrix& other) 
+    {
+        if (this != &other) 
+        {
+            for (int i = 0; i < rows; ++i) 
+            {
+                delete[] data[i];
+            }
+            delete[] data;
+
+            rows = other.rows;
+            cols = other.cols;
+
+            data = new int*[rows];
+            for (int i = 0; i < rows; ++i) 
+            {
+                data[i] = new int[cols];
+                for (int j = 0; j < cols; ++j) 
+                {
+                    data[i][j] = other.data[i][j];
+                }
+            }
+        }
+        return *this;
+    }
+
+    // Move assignment operator
+    Matrix& operator=(Matrix&& other) 
+    {
+        if (this != &other) 
+        {
+            for (int i = 0; i < rows; ++i) 
+            {
+                delete[] data[i];
+            }
+            delete[] data;
+
+            data = other.data;
+            rows = other.rows;
+            cols = other.cols;
+
+            other.data = nullptr;
+            other.rows = 0;
+            other.cols = 0;
+        }
+        return *this;
+    }
 
     Matrix& operator++() 
     {
@@ -92,34 +153,6 @@ public:
         return result;
     }
 
-    Matrix& operator=(const Matrix& other) 
-    {
-        if (this != &other) 
-        {
-            for (int i = 0; i < rows; ++i) 
-            {
-                delete[] data[i];
-            }
-
-            delete[] data;
-
-            rows = other.rows;
-            cols = other.cols;
-
-            data = new int*[rows];
-            for (int i = 0; i < rows; ++i) 
-            {
-                data[i] = new int[cols];
-                for (int j = 0; j < cols; ++j) 
-                {
-                    data[i][j] = other.data[i][j];
-                }
-            }
-        }
-        return *this;
-    }
-
-
     void print() const 
     {
         for (int i = 0; i < rows; ++i) 
@@ -148,7 +181,7 @@ public:
 
 int main() 
 {
-    srand(time(nullptr));
+    srand((time(nullptr)));
 
     int m, n;
     std::cout << "Enter the value of m: ";
